@@ -6,23 +6,18 @@
 #include <unistd.h>
 #include <cstring>
 #include "../msgqueue/Cola.h"
+#include "../constantes.h"
+#include "../record.h"
+#include "../request.h"
 
-#define REQUEST_MSG 1;
-#define ADD 1
-#define GET 2
-
-struct record {
-    char name[61];
-    char address[120];
-    char phone[13];
-};
-
-struct request {
-    long mtype;
-    int client;
-    int req_type;
-    struct record rec;
-};
+std::string getField(std::string name, size_t len) {
+    std::string line;
+    std::cout << name << ":";
+    do {
+        std::getline(std::cin, line);
+    } while (line.size() > len);
+    return line;
+}
 
 void handle_add(Cola<struct request> &msg_queue) {
     struct request req;
@@ -30,30 +25,27 @@ void handle_add(Cola<struct request> &msg_queue) {
     req.req_type = ADD;
     req.client = getpid();
     struct record rec;
-    std::string line;
-    std::cout << "Name:";
-    do {
-        std::getline(std::cin, line);
-    } while (line.size() > 61);
 
-    strncpy(rec.name, line.c_str(), 61);
+    std::string name = getField("Name", NAME_LENGTH);
 
-    std::cout << "Address:";
-    do {
-        std::getline(std::cin, line);
-    } while (line.size() > 120);
-    strncpy(rec.address, line.c_str(), 120);
+    strncpy(rec.name, name.c_str(), NAME_LENGTH);
 
-    std::cout << "Phone:";
-    do {
-        std::getline(std::cin, line);
-    } while (line.size() > 13);
-    strncpy(rec.phone, line.c_str(), 13);
+    std::string address = getField("Address", ADDRESS_LENGTH);
+
+    strncpy(rec.address, address.c_str(), ADDRESS_LENGTH);
+
+    std::string phone = getField("Phone", PHONE_LENGTH);
+
+    strncpy(rec.phone, phone.c_str(), PHONE_LENGTH);
+
     req.rec = rec;
+
     msg_queue.escribir(req);
-    std::cout << "[client] waiting for server's response" << std::endl;
+    std::cout << "Waiting for server's response ..." << std::endl;
     msg_queue.leer(getpid(), &req);
-    std::cout << "[client]" << req.req_type << std::endl;
+    if (req.status == OK) {
+        std::cout << "* OK" << std::endl;
+    }
 }
 
 void handle_get(Cola<struct request> &msg_queue) {
@@ -62,44 +54,48 @@ void handle_get(Cola<struct request> &msg_queue) {
     req.req_type = GET;
     req.client = getpid();
     std::string line;
-    std::cout << "Name:";
-    do {
-        std::getline(std::cin, line);
-    } while (line.size() > 61);
 
-    strncpy(req.rec.name, line.c_str(), 61);
-    std::cout << "GET " << req.rec.name << std::endl;
+    std::string name = getField("Name", NAME_LENGTH);
+
+    strncpy(req.rec.name, name.c_str(), NAME_LENGTH);
+
     msg_queue.escribir(req);
-    std::cout << "[client] waiting for server's response" << std::endl;
+    std::cout << "Waiting for server's response ..." << std::endl;
     msg_queue.leer(getpid(), &req);
-    std::cout << "Name:" << req.rec.name << std::endl;
-    std::cout << "Address:" << req.rec.address << std::endl;
-    std::cout << "Phone:" << req.rec.phone << std::endl;
+    std::cout << std::endl;
+    if (req.status == OK) {
+        std::cout << "* Name:" << req.rec.name << std::endl;
+        std::cout << "* Address:" << req.rec.address << std::endl;
+        std::cout << "* Phone:" << req.rec.phone << std::endl;
+    } else {
+        if (req.status == NOT_FOUND) {
+            std::cout << "* Not found" << std::endl;
+        }
+    }
 }
 
 
 int main() {
-    Cola<struct request> msg_queue("/bin/bash", 'a');
+    Cola<struct request> msg_queue(KEY_PATH, MSG_QUEUE);
     char c = '0';
     while (true) {
+        std::cout << std::endl;
         std::cout << "1. Add record" << std::endl;
         std::cout << "2. Get record by name" << std::endl;
         c = (char) getchar();
-        while (c != '1' && c != '2' && c != 'q') {
+        while (c != OPTION_ADD && c != OPTION_GET && c != OPTION_QUIT) {
             c = (char) getchar();
         }
-        if (c == 'q') {
+        if (c == OPTION_QUIT) {
             break;
         }
         std::cin.ignore();
-        if (c == '1') {
+        if (c == OPTION_ADD) {
             handle_add(msg_queue);
         }
-        if (c == '2') {
+        if (c == OPTION_GET) {
             handle_get(msg_queue);
         }
 
     }
-
-
 }
