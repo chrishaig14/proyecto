@@ -1,7 +1,3 @@
-//
-// Created by chris on 18/06/17.
-//
-
 #ifndef PROYECTO_DATABASE_H
 #define PROYECTO_DATABASE_H
 

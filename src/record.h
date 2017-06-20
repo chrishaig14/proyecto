@@ -1,11 +1,7 @@
-//
-// Created by chris on 18/06/17.
-//
-
 #ifndef PROYECTO_RECORD_H
 #define PROYECTO_RECORD_H
 
-#include "constantes.h"
+#include "constants.h"
 
 struct record {
     char name[NAME_LENGTH];

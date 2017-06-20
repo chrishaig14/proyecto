@@ -8,15 +8,15 @@
 #include <string>
 
 template<class T>
-class Cola {
+class MsgQueue {
 private:
     key_t clave;
     int id;
 
 public:
-    Cola(const std::string &archivo, const char letra);
+    MsgQueue(const std::string &archivo, const char letra);
 
-    ~Cola();
+    ~MsgQueue();
 
     int escribir(const T &dato) const;
 
@@ -26,7 +26,7 @@ public:
 };
 
 template<class T>
-Cola<T>::Cola(const std::string &archivo, const char letra) {
+MsgQueue<T>::MsgQueue(const std::string &archivo, const char letra) {
     this->clave = ftok(archivo.c_str(), letra);
     if (this->clave == -1)
         perror("Error en ftok");
@@ -37,23 +37,23 @@ Cola<T>::Cola(const std::string &archivo, const char letra) {
 }
 
 template<class T>
-Cola<T>::~Cola() {
+MsgQueue<T>::~MsgQueue() {
 }
 
 template<class T>
-int Cola<T>::destruir() const {
+int MsgQueue<T>::destruir() const {
     int resultado = msgctl(this->id, IPC_RMID, NULL);
     return resultado;
 }
 
 template<class T>
-int Cola<T>::escribir(const T &dato) const {
+int MsgQueue<T>::escribir(const T &dato) const {
     int resultado = msgsnd(this->id, static_cast<const void *>(&dato), sizeof(T) - sizeof(long), 0);
     return resultado;
 }
 
 template<class T>
-int Cola<T>::leer(const int tipo, T *buffer) const {
+int MsgQueue<T>::leer(const int tipo, T *buffer) const {
     int resultado = msgrcv(this->id, static_cast<void *>(buffer), sizeof(T) - sizeof(long), tipo, 0);
     return resultado;
 }

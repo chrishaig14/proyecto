@@ -8,9 +8,7 @@ set(SOURCE_FILES
         src/lock_file/LockFile.h
         src/logger/Log.cpp
         src/logger/Log.h
-        src/msgqueue/Cola.h
-        src/semaphore/Semaphore.cpp
-        src/semaphore/Semaphore.h
+        src/msgqueue/MsgQueue.h
         src/signals/EventHandler.h
         src/signals/SIGINT_Handler.h
         src/signals/SignalHandler.cpp
