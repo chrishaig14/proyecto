@@ -8,20 +8,21 @@ SignalHandler::SignalHandler() {
 
 SignalHandler *SignalHandler::getInstance() {
 
-    if (instance == NULL)
+    if (instance == NULL) {
         instance = new SignalHandler();
+    }
 
     return instance;
 }
 
-void SignalHandler::destruir() {
+void SignalHandler::destroy() {
     if (instance != NULL) {
         delete (instance);
         instance = NULL;
     }
 }
 
-EventHandler *SignalHandler::registrarHandler(int signum, EventHandler *eh) {
+EventHandler *SignalHandler::registerHandler(int signum, EventHandler *eh) {
 
     EventHandler *old_eh = SignalHandler::signal_handlers[signum];
     SignalHandler::signal_handlers[signum] = eh;
@@ -42,7 +43,7 @@ void SignalHandler::dispatcher(int signum) {
         SignalHandler::signal_handlers[signum]->handleSignal(signum);
 }
 
-int SignalHandler::removerHandler(int signum) {
+int SignalHandler::removeHandler(int signum) {
 
     SignalHandler::signal_handlers[signum] = NULL;
     return 0;

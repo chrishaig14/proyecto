@@ -4,10 +4,6 @@ project(proyecto)
 set(CMAKE_CXX_STANDARD 11)
 
 set(SOURCE_FILES
-        src/lock_file/LockFile.cpp
-        src/lock_file/LockFile.h
-        src/logger/Log.cpp
-        src/logger/Log.h
         src/msgqueue/MsgQueue.h
         src/signals/EventHandler.h
         src/signals/SIGINT_Handler.h

@@ -1,8 +1,6 @@
 /* File path for IPCs. */
 #define KEY_PATH "/bin/bash"
 
-/* Log file name*/
-#define LOG_PATH "log.txt"
 #define REQUEST_MSG 1
 #define ADD 1
 #define GET 2

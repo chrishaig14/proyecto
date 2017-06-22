@@ -20,11 +20,11 @@ private:
 public:
     static SignalHandler *getInstance();
 
-    static void destruir();
+    static void destroy();
 
-    EventHandler *registrarHandler(int signum, EventHandler *eh);
+    EventHandler *registerHandler(int signum, EventHandler *eh);
 
-    int removerHandler(int signum);
+    int removeHandler(int signum);
 
 };
 
